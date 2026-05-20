@@ -380,13 +380,10 @@
   <div class="legend">
     <h3>PCF Design Notes (for stakeholder reference)</h3>
     <ul>
-      <li><strong>PCF type:</strong> Field control (FetchXmlFilterTable) placed on a Model-Driven App custom page via a dummy host field</li>
-      <li><strong>Data source:</strong> Live Dataverse queries via context.webAPI — results are always real-time</li>
       <li><strong>Cascading dropdowns:</strong> Selecting a Domain triggers a WebAPI call to reload only that slot's Expertise dropdown</li>
       <li><strong>Filter logic:</strong> AND across all active criteria — an expert must match Language AND Expertise slot 1 AND Expertise slot 2</li>
       <li><strong>Regions:</strong> Searched the same way as any other expertise — select "Regions" as the Domain, then pick a region in the Expertise dropdown</li>
       <li><strong>Click-through:</strong> Expert names link directly to their ExpertProfile record in the MDA</li>
-      <li><strong>Reusability:</strong> The same PCF control can be placed on any form with different FetchXml configuration — no code changes required</li>
     </ul>
   </div>
 
