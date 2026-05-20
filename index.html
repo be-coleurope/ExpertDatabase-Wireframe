@@ -1,0 +1,583 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+  <meta charset="UTF-8" />
+  <meta name="viewport" content="width=device-width, initial-scale=1.0" />
+  <title>Expert Search — PCF Concept Mockup</title>
+  <style>
+    *, *::before, *::after { box-sizing: border-box; margin: 0; padding: 0; }
+
+    body {
+      font-family: "Segoe UI", system-ui, -apple-system, sans-serif;
+      font-size: 14px;
+      background: #f3f2f1;
+      color: #201f1e;
+      min-height: 100vh;
+    }
+
+    /* ── MDA chrome ── */
+    .mda-header {
+      background: #0078d4;
+      color: #fff;
+      padding: 0 20px;
+      height: 48px;
+      display: flex;
+      align-items: center;
+      gap: 12px;
+      font-size: 16px;
+      font-weight: 600;
+      letter-spacing: .01em;
+    }
+    .mda-header .app-name { opacity: .75; font-weight: 400; font-size: 13px; }
+    .mda-header .sep { opacity: .4; }
+
+    .mda-sub-header {
+      background: #fff;
+      border-bottom: 1px solid #edebe9;
+      padding: 0 20px;
+      height: 40px;
+      display: flex;
+      align-items: center;
+      gap: 8px;
+      font-size: 12px;
+      color: #605e5c;
+    }
+    .mda-sub-header .crumb-active { color: #201f1e; font-weight: 600; }
+
+    /* ── page shell ── */
+    .page {
+      max-width: 1200px;
+      margin: 20px auto;
+      padding: 0 20px;
+    }
+
+    /* ── PCF card ── */
+    .pcf-card {
+      background: #fff;
+      border: 1px solid #edebe9;
+      border-radius: 4px;
+      box-shadow: 0 1.6px 3.6px rgba(0,0,0,.13), 0 .3px .9px rgba(0,0,0,.1);
+    }
+
+    .pcf-title-bar {
+      padding: 14px 20px 12px;
+      border-bottom: 1px solid #edebe9;
+      display: flex;
+      align-items: center;
+      justify-content: space-between;
+    }
+    .pcf-title-bar h2 {
+      font-size: 15px;
+      font-weight: 600;
+      color: #201f1e;
+    }
+    .pcf-title-bar .subtitle {
+      font-size: 12px;
+      color: #605e5c;
+      margin-top: 2px;
+    }
+
+    /* ── filter panel ── */
+    .filter-panel {
+      padding: 16px 20px;
+      background: #faf9f8;
+      border-bottom: 1px solid #edebe9;
+      display: flex;
+      flex-wrap: nowrap;
+      gap: 20px;
+      align-items: flex-end;
+      overflow-x: auto;
+    }
+
+    .filter-group {
+      display: flex;
+      flex-direction: column;
+      gap: 4px;
+      min-width: 160px;
+    }
+    .filter-group label {
+      font-size: 12px;
+      font-weight: 600;
+      color: #323130;
+    }
+    .filter-group select {
+      height: 32px;
+      padding: 0 8px;
+      border: 1px solid #8a8886;
+      border-radius: 2px;
+      font-size: 13px;
+      font-family: inherit;
+      background: #fff;
+      color: #201f1e;
+      cursor: pointer;
+      min-width: 160px;
+      appearance: none;
+      background-image: url("data:image/svg+xml,%3Csvg xmlns='http://www.w3.org/2000/svg' width='16' height='16' viewBox='0 0 16 16'%3E%3Cpath d='M4 6l4 4 4-4' stroke='%23605e5c' stroke-width='1.5' fill='none' stroke-linecap='round'/%3E%3C/svg%3E");
+      background-repeat: no-repeat;
+      background-position: right 6px center;
+      padding-right: 28px;
+    }
+    .filter-group select:focus { outline: 2px solid #0078d4; outline-offset: 1px; border-color: #0078d4; }
+    .filter-group select:hover { border-color: #323130; }
+
+    .filter-slot {
+      display: flex;
+      gap: 8px;
+      align-items: flex-end;
+      flex-wrap: nowrap;
+    }
+    .filter-slot .slot-label {
+      font-size: 11px;
+      color: #a19f9d;
+      font-weight: 600;
+      text-transform: uppercase;
+      letter-spacing: .04em;
+      align-self: flex-start;
+      padding-top: 2px;
+      width: 100%;
+    }
+    .filter-slot-arrow {
+      font-size: 18px;
+      color: #c8c6c4;
+      padding-bottom: 4px;
+      line-height: 32px;
+    }
+
+    .filter-divider {
+      width: 1px;
+      height: 52px;
+      background: #edebe9;
+      align-self: flex-end;
+      margin-bottom: 0;
+    }
+
+    .clear-btn {
+      height: 32px;
+      padding: 0 16px;
+      background: #fff;
+      border: 1px solid #8a8886;
+      border-radius: 2px;
+      font-size: 13px;
+      font-family: inherit;
+      color: #323130;
+      cursor: pointer;
+      align-self: flex-end;
+    }
+    .clear-btn:hover { background: #f3f2f1; border-color: #323130; }
+    .clear-btn:active { background: #edebe9; }
+
+    /* ── results ── */
+    .results-bar {
+      padding: 10px 20px;
+      display: flex;
+      align-items: center;
+      justify-content: space-between;
+      font-size: 12px;
+      color: #605e5c;
+      border-bottom: 1px solid #edebe9;
+    }
+    .results-bar .count strong { color: #201f1e; font-size: 13px; }
+    .active-filters {
+      display: flex;
+      gap: 6px;
+      flex-wrap: wrap;
+    }
+    .filter-chip {
+      background: #deecf9;
+      color: #004578;
+      border-radius: 12px;
+      padding: 2px 10px;
+      font-size: 11px;
+      font-weight: 600;
+    }
+
+    table {
+      width: 100%;
+      border-collapse: collapse;
+      font-size: 13px;
+    }
+    thead th {
+      text-align: left;
+      padding: 10px 20px;
+      font-size: 11px;
+      font-weight: 700;
+      color: #605e5c;
+      text-transform: uppercase;
+      letter-spacing: .04em;
+      border-bottom: 2px solid #edebe9;
+      background: #faf9f8;
+      white-space: nowrap;
+    }
+    tbody tr { border-bottom: 1px solid #f3f2f1; }
+    tbody tr:hover { background: #f3f2f1; }
+    tbody td { padding: 10px 20px; vertical-align: top; }
+
+    .expert-name { font-weight: 600; color: #0078d4; cursor: pointer; }
+    .expert-name:hover { text-decoration: underline; }
+
+    .badge {
+      display: inline-block;
+      padding: 1px 8px;
+      border-radius: 2px;
+      font-size: 11px;
+      font-weight: 600;
+    }
+    .badge-active { background: #dff6dd; color: #107c10; }
+    .badge-inactive { background: #fde7e9; color: #a80000; }
+    .badge-pending { background: #fff4ce; color: #7d5a00; }
+
+    .lang-list { display: flex; gap: 4px; flex-wrap: wrap; }
+    .lang-tag {
+      background: #f3f2f1;
+      color: #323130;
+      padding: 1px 7px;
+      border-radius: 2px;
+      font-size: 11px;
+    }
+
+    .empty-state {
+      padding: 48px 20px;
+      text-align: center;
+      color: #a19f9d;
+    }
+    .empty-state svg { margin-bottom: 12px; }
+    .empty-state p { font-size: 14px; }
+    .empty-state small { font-size: 12px; display: block; margin-top: 4px; }
+
+    /* ── mockup banner ── */
+    .mockup-banner {
+      background: #fff4ce;
+      border: 1px solid #ffd335;
+      border-radius: 4px;
+      padding: 10px 16px;
+      margin-bottom: 16px;
+      font-size: 12px;
+      color: #7d5a00;
+      display: flex;
+      gap: 10px;
+      align-items: flex-start;
+    }
+    .mockup-banner strong { display: block; font-size: 13px; margin-bottom: 2px; }
+
+    /* ── legend ── */
+    .legend {
+      margin-top: 16px;
+      background: #fff;
+      border: 1px solid #edebe9;
+      border-radius: 4px;
+      padding: 16px 20px;
+      font-size: 12px;
+      color: #605e5c;
+    }
+    .legend h3 { font-size: 13px; font-weight: 600; color: #201f1e; margin-bottom: 10px; }
+    .legend ul { list-style: none; display: flex; flex-direction: column; gap: 6px; }
+    .legend li::before { content: "→ "; color: #0078d4; }
+    .legend li strong { color: #201f1e; }
+  </style>
+</head>
+<body>
+
+<!-- MDA chrome simulation -->
+<div class="mda-header">
+  <span class="app-name">Expert Database</span>
+  <span class="sep">|</span>
+  Expert Search
+</div>
+<div class="mda-sub-header">
+  <span>Home</span>
+  <span>›</span>
+  <span class="crumb-active">Expert Search</span>
+</div>
+
+<div class="page">
+
+  <!-- mockup notice -->
+  <div class="mockup-banner">
+    <span>⚠️</span>
+    <div>
+      <strong>Concept Mockup — not a live system</strong>
+      All data is representative sample data. This mockup illustrates Option A from DQ-001: a PCF field control
+      with 5 filter controls (Language + 2 × cascading Domain → Expertise pairs) driving a results table.
+      Filter logic is AND across all active criteria.
+    </div>
+  </div>
+
+  <!-- PCF card -->
+  <div class="pcf-card">
+    <div class="pcf-title-bar">
+      <div>
+        <h2>Expert Search</h2>
+        <div class="subtitle">Filter by language and up to two expertise areas — all criteria are optional</div>
+      </div>
+    </div>
+
+    <!-- Filter panel -->
+    <div class="filter-panel">
+
+      <!-- Language -->
+      <div class="filter-group">
+        <label for="lang">Language</label>
+        <select id="lang" onchange="applyFilters()">
+          <option value="">— Any language —</option>
+        </select>
+      </div>
+
+      <div class="filter-divider"></div>
+
+      <!-- Slot 1 -->
+      <div class="filter-slot">
+        <span class="slot-label">Expertise slot 1</span>
+        <div class="filter-group">
+          <label for="domain1">Domain</label>
+          <select id="domain1" onchange="onDomainChange(1)">
+            <option value="">— Any domain —</option>
+          </select>
+        </div>
+        <div class="filter-slot-arrow">›</div>
+        <div class="filter-group">
+          <label for="exp1">Expertise</label>
+          <select id="exp1" onchange="applyFilters()" disabled>
+            <option value="">— Select domain first —</option>
+          </select>
+        </div>
+      </div>
+
+      <div class="filter-divider"></div>
+
+      <!-- Slot 2 -->
+      <div class="filter-slot">
+        <span class="slot-label">Expertise slot 2</span>
+        <div class="filter-group">
+          <label for="domain2">Domain</label>
+          <select id="domain2" onchange="onDomainChange(2)">
+            <option value="">— Any domain —</option>
+          </select>
+        </div>
+        <div class="filter-slot-arrow">›</div>
+        <div class="filter-group">
+          <label for="exp2">Expertise</label>
+          <select id="exp2" onchange="applyFilters()" disabled>
+            <option value="">— Select domain first —</option>
+          </select>
+        </div>
+      </div>
+
+      <button class="clear-btn" onclick="clearFilters()">Clear all</button>
+
+    </div>
+
+    <!-- Results bar -->
+    <div class="results-bar">
+      <div class="count"><strong id="result-count">0</strong> expert(s) found</div>
+      <div class="active-filters" id="active-filters"></div>
+    </div>
+
+    <!-- Results table -->
+    <div id="results-wrapper">
+      <table>
+        <thead>
+          <tr>
+            <th>Expert</th>
+            <th>Role</th>
+            <th>Pool Status</th>
+            <th>Languages</th>
+            <th>Expertise Areas</th>
+          </tr>
+        </thead>
+        <tbody id="results-body"></tbody>
+      </table>
+    </div>
+
+  </div><!-- /pcf-card -->
+
+  <!-- Design legend -->
+  <div class="legend">
+    <h3>PCF Design Notes (for stakeholder reference)</h3>
+    <ul>
+      <li><strong>PCF type:</strong> Field control (FetchXmlFilterTable) placed on a Model-Driven App custom page via a dummy host field</li>
+      <li><strong>Data source:</strong> Live Dataverse queries via context.webAPI — results are always real-time</li>
+      <li><strong>Cascading dropdowns:</strong> Selecting a Domain triggers a WebAPI call to reload only that slot's Expertise dropdown</li>
+      <li><strong>Filter logic:</strong> AND across all active criteria — an expert must match Language AND Expertise slot 1 AND Expertise slot 2</li>
+      <li><strong>Regions:</strong> Searched the same way as any other expertise — select "Regions" as the Domain, then pick a region in the Expertise dropdown</li>
+      <li><strong>Click-through:</strong> Expert names link directly to their ExpertProfile record in the MDA</li>
+      <li><strong>Reusability:</strong> The same PCF control can be placed on any form with different FetchXml configuration — no code changes required</li>
+    </ul>
+  </div>
+
+</div><!-- /page -->
+
+<script>
+// ── Reference data (mirrors real Dataverse reference tables) ──────────────
+const LANGUAGES = ["Arabic", "Chinese", "English", "French", "German", "Spanish"];
+
+const DOMAINS = {
+  "Governance":                 ["EU Institutions", "EU and International Organisations", "History of European Integration", "EU Law General / EU Treaties", "EU Decision-making Process", "Policy-making Process", "EU Financial Framework", "EU Economic Governance", "Public Administration", "Other"],
+  "Policy":                     ["Agriculture and Fisheries", "Business, Economy, Finance and Tax", "Competition", "Consumers, Health, Food Safety", "Culture, Education and Youth", "Employment and Social Issues", "Environment, Energy & Climate Change", "Internal Market and Industry", "Justice and Home Affairs", "Mobility and Transport", "Regional / Local Development", "Research and Innovation", "Science and Technology", "Trade", "Other"],
+  "External Relations":         ["Common Foreign and Security Policy", "EU Enlargement", "Relations with 3rd Countries", "Development and Cooperation", "Humanitarian Aid", "Human Rights", "EU Trade Law & WTO Law", "Other"],
+  "Skills":                     ["Crisis Management", "Crosscultural Communication", "EU Fact Finding", "EU Terminology", "Facilitating / Moderation", "Leadership & Change Management", "Lobbying", "EU Negotiations", "Reporting", "Training of Trainers", "Other"],
+  "Communication & Information":["Communications Strategy", "EU Information Centre", "Journalism", "PR & Media Relations", "Events / Campaigns", "Multi-media / Audiovisual", "Other"],
+  "Project Management":         ["Contracts / Grants", "EU Funds and Programmes", "Budget and Financial Management", "Monitoring and Evaluation", "Audit", "Project Cycle Management", "Tender and Proposal Drafting", "Other"],
+  "Regions":                    ["Western Europe", "Northern Europe", "Southern Europe", "Southeastern Europe", "Eastern Europe", "Central Europe", "North America", "Central America and the Caribbean", "South America", "Northern Africa", "West Africa", "East Africa", "Central Africa", "Southern Africa", "Middle East", "Central Asia", "South Asia", "Southeast Asia", "East Asia", "Australia and South Pacific", "Other"]
+};
+
+// ── Sample expert data ─────────────────────────────────────────────────────
+const EXPERTS = [
+  { name: "Maria González",    role: "Senior Trainer",     status: "Active",   langs: ["English","Spanish"],                expertises: [["Policy","Agriculture and Fisheries"],       ["Regions","South America"]] },
+  { name: "Jean-Pierre Dubois",role: "Associate Expert",   status: "Active",   langs: ["French","English"],                 expertises: [["Governance","EU Institutions"],              ["External Relations","EU Enlargement"]] },
+  { name: "Fatima Al-Hassan",  role: "Trainer",            status: "Inactive", langs: ["Arabic","French","English"],        expertises: [["Policy","Environment, Energy & Climate Change"],["Regions","Northern Africa"]] },
+  { name: "Klaus Schmidt",     role: "Senior Expert",      status: "Active",   langs: ["German","English"],                 expertises: [["Governance","EU Law General / EU Treaties"], ["Project Management","EU Funds and Programmes"]] },
+  { name: "Sarah Williams",    role: "Trainer",            status: "Active",   langs: ["English"],                          expertises: [["Policy","Trade"],                             ["Skills","EU Negotiations"]] },
+  { name: "Amara Diallo",      role: "Associate Expert",   status: "Active",   langs: ["French","English"],                 expertises: [["External Relations","Development and Cooperation"],["Regions","West Africa"]] },
+  { name: "Chen Wei",          role: "Expert",             status: "Active",   langs: ["Chinese","English"],                expertises: [["External Relations","Relations with 3rd Countries"],["Regions","East Asia"]] },
+  { name: "Anna Kowalski",     role: "Senior Trainer",     status: "Active",   langs: ["English","German"],                 expertises: [["Skills","Training of Trainers"],             ["Communication & Information","Journalism"]] },
+  { name: "Hassan Ould",       role: "Trainer",            status: "Active",   langs: ["Arabic","French"],                  expertises: [["Regions","Middle East"],                     ["External Relations","Human Rights"]] },
+  { name: "Marie Lefebvre",    role: "Associate Expert",   status: "Inactive", langs: ["French","English"],                 expertises: [["Policy","Culture, Education and Youth"],     ["Communication & Information","Communications Strategy"]] },
+  { name: "John Murphy",       role: "Expert",             status: "Active",   langs: ["English"],                          expertises: [["Project Management","Project Cycle Management"],["Skills","Crisis Management"]] },
+  { name: "Isabelle Moreau",   role: "Senior Expert",      status: "Active",   langs: ["French","English","German"],        expertises: [["Governance","EU Decision-making Process"],   ["Policy","Business, Economy, Finance and Tax"]] },
+  { name: "Ravi Patel",        role: "Trainer",            status: "Active",   langs: ["English"],                          expertises: [["Project Management","Tender and Proposal Drafting"],["Regions","South Asia"]] },
+  { name: "Elena Vasquez",     role: "Associate Expert",   status: "Active",   langs: ["Spanish","English","French"],       expertises: [["Policy","Employment and Social Issues"],     ["External Relations","Human Rights"]] },
+  { name: "Thomas Weber",      role: "Expert",             status: "Active",   langs: ["German","English"],                 expertises: [["Governance","Public Administration"],        ["Project Management","Audit"]] },
+  { name: "Sophie Leclerc",    role: "Trainer",            status: "Active",   langs: ["French","English","Spanish"],       expertises: [["External Relations","Humanitarian Aid"],     ["Regions","Central Africa"]] },
+  { name: "Marco Ferretti",    role: "Senior Trainer",     status: "Active",   langs: ["English","German"],                 expertises: [["Policy","Internal Market and Industry"],     ["Governance","EU Economic Governance"]] },
+  { name: "Nadia Okonkwo",     role: "Expert",             status: "Active",   langs: ["English","French"],                 expertises: [["Regions","East Africa"],                     ["External Relations","Development and Cooperation"]] },
+  { name: "Pieter van den Berg",role:"Associate Expert",   status: "Active",   langs: ["English","French","German"],        expertises: [["Project Management","Monitoring and Evaluation"],["Governance","EU Financial Framework"]] },
+  { name: "Laila Benali",      role: "Senior Expert",      status: "Active",   langs: ["Arabic","French","English"],        expertises: [["Regions","Southern Africa"],                 ["Policy","Consumers, Health, Food Safety"]] },
+];
+
+// ── Populate dropdowns on load ─────────────────────────────────────────────
+function init() {
+  const langSel = document.getElementById("lang");
+  LANGUAGES.forEach(l => langSel.add(new Option(l, l)));
+
+  ["domain1","domain2"].forEach(id => {
+    const sel = document.getElementById(id);
+    Object.keys(DOMAINS).forEach(d => sel.add(new Option(d, d)));
+  });
+
+  applyFilters();
+}
+
+function onDomainChange(slot) {
+  const domainSel = document.getElementById("domain" + slot);
+  const expSel    = document.getElementById("exp" + slot);
+  const domain    = domainSel.value;
+
+  expSel.innerHTML = "";
+  if (!domain) {
+    expSel.add(new Option("— Select domain first —", ""));
+    expSel.disabled = true;
+  } else {
+    expSel.add(new Option("— Any expertise —", ""));
+    DOMAINS[domain].forEach(e => expSel.add(new Option(e, e)));
+    expSel.disabled = false;
+  }
+  applyFilters();
+}
+
+// ── Filtering logic ────────────────────────────────────────────────────────
+function applyFilters() {
+  const langFilter  = document.getElementById("lang").value;
+  const domain1     = document.getElementById("domain1").value;
+  const exp1        = document.getElementById("exp1").value;
+  const domain2     = document.getElementById("domain2").value;
+  const exp2        = document.getElementById("exp2").value;
+
+  const results = EXPERTS.filter(expert => {
+    // Language — must have the selected language (if any)
+    if (langFilter && !expert.langs.includes(langFilter)) return false;
+
+    // Slot 1 — domain alone: must have any expertise in that domain
+    if (domain1) {
+      const hasMatch = expert.expertises.some(([d, e]) => {
+        if (exp1) return d === domain1 && e === exp1;
+        return d === domain1;
+      });
+      if (!hasMatch) return false;
+    }
+
+    // Slot 2 — domain alone: must have any expertise in that domain
+    if (domain2) {
+      const hasMatch = expert.expertises.some(([d, e]) => {
+        if (exp2) return d === domain2 && e === exp2;
+        return d === domain2;
+      });
+      if (!hasMatch) return false;
+    }
+
+    return true;
+  });
+
+  renderResults(results);
+  renderChips(langFilter, domain1, exp1, domain2, exp2);
+}
+
+// ── Render table ──────────────────────────────────────────────────────────
+function renderResults(results) {
+  document.getElementById("result-count").textContent = results.length;
+  const tbody = document.getElementById("results-body");
+  tbody.innerHTML = "";
+
+  if (results.length === 0) {
+    const tr = document.createElement("tr");
+    tr.innerHTML = `<td colspan="5">
+      <div class="empty-state">
+        <p>No experts match the current filters.</p>
+        <small>Try removing one or more filters.</small>
+      </div>
+    </td>`;
+    tbody.appendChild(tr);
+    return;
+  }
+
+  results.forEach(expert => {
+    const statusBadge = expert.status === "Active"
+      ? `<span class="badge badge-active">Active</span>`
+      : `<span class="badge badge-inactive">Inactive</span>`;
+
+    const langTags = expert.langs.map(l =>
+      `<span class="lang-tag">${l}</span>`
+    ).join("");
+
+    const expertiseCells = expert.expertises.map(([d, e]) =>
+      `<div style="font-size:11px; color:#605e5c; margin-bottom:2px;"><span style="font-weight:600; color:#323130;">${d}</span> › ${e}</div>`
+    ).join("");
+
+    const tr = document.createElement("tr");
+    tr.innerHTML = `
+      <td><span class="expert-name">${expert.name}</span></td>
+      <td>${expert.role}</td>
+      <td>${statusBadge}</td>
+      <td><div class="lang-list">${langTags}</div></td>
+      <td>${expertiseCells}</td>
+    `;
+    tbody.appendChild(tr);
+  });
+}
+
+// ── Render active filter chips ─────────────────────────────────────────────
+function renderChips(lang, domain1, exp1, domain2, exp2) {
+  const el = document.getElementById("active-filters");
+  el.innerHTML = "";
+  if (lang)   el.innerHTML += `<span class="filter-chip">Lang: ${lang}</span>`;
+  if (exp1)   el.innerHTML += `<span class="filter-chip">Slot 1: ${exp1}</span>`;
+  else if (domain1) el.innerHTML += `<span class="filter-chip">Slot 1: ${domain1} (any)</span>`;
+  if (exp2)   el.innerHTML += `<span class="filter-chip">Slot 2: ${exp2}</span>`;
+  else if (domain2) el.innerHTML += `<span class="filter-chip">Slot 2: ${domain2} (any)</span>`;
+}
+
+// ── Clear all ─────────────────────────────────────────────────────────────
+function clearFilters() {
+  document.getElementById("lang").value = "";
+  ["1","2"].forEach(s => {
+    document.getElementById("domain" + s).value = "";
+    const expSel = document.getElementById("exp" + s);
+    expSel.innerHTML = '<option value="">— Select domain first —</option>';
+    expSel.disabled = true;
+  });
+  applyFilters();
+}
+
+window.addEventListener("DOMContentLoaded", init);
+</script>
+</body>
+</html>
