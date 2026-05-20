@@ -85,7 +85,7 @@
       display: flex;
       flex-wrap: nowrap;
       gap: 20px;
-      align-items: flex-end;
+      align-items: flex-start;
       overflow-x: auto;
     }
 
@@ -122,9 +122,9 @@
 
     .filter-slot {
       display: flex;
-      gap: 8px;
-      align-items: flex-end;
-      flex-wrap: nowrap;
+      flex-direction: column;
+      gap: 6px;
+      align-items: stretch;
     }
     .filter-slot .slot-label {
       font-size: 11px;
@@ -132,23 +132,12 @@
       font-weight: 600;
       text-transform: uppercase;
       letter-spacing: .04em;
-      align-self: flex-start;
-      padding-top: 2px;
-      width: 100%;
-    }
-    .filter-slot-arrow {
-      font-size: 18px;
-      color: #c8c6c4;
-      padding-bottom: 4px;
-      line-height: 32px;
     }
 
     .filter-divider {
       width: 1px;
-      height: 52px;
       background: #edebe9;
-      align-self: flex-end;
-      margin-bottom: 0;
+      align-self: stretch;
     }
 
     .clear-btn {
@@ -162,6 +151,7 @@
       color: #323130;
       cursor: pointer;
       align-self: flex-end;
+      margin-top: auto;
     }
     .clear-btn:hover { background: #f3f2f1; border-color: #323130; }
     .clear-btn:active { background: #edebe9; }
@@ -333,7 +323,6 @@
             <option value="">— Any domain —</option>
           </select>
         </div>
-        <div class="filter-slot-arrow">›</div>
         <div class="filter-group">
           <label for="exp1">Expertise</label>
           <select id="exp1" onchange="applyFilters()" disabled>
@@ -353,7 +342,6 @@
             <option value="">— Any domain —</option>
           </select>
         </div>
-        <div class="filter-slot-arrow">›</div>
         <div class="filter-group">
           <label for="exp2">Expertise</label>
           <select id="exp2" onchange="applyFilters()" disabled>
@@ -378,8 +366,6 @@
         <thead>
           <tr>
             <th>Expert</th>
-            <th>Role</th>
-            <th>Pool Status</th>
             <th>Languages</th>
             <th>Expertise Areas</th>
           </tr>
@@ -422,26 +408,114 @@ const DOMAINS = {
 
 // ── Sample expert data ─────────────────────────────────────────────────────
 const EXPERTS = [
-  { name: "Maria González",    role: "Senior Trainer",     status: "Active",   langs: ["English","Spanish"],                expertises: [["Policy","Agriculture and Fisheries"],       ["Regions","South America"]] },
-  { name: "Jean-Pierre Dubois",role: "Associate Expert",   status: "Active",   langs: ["French","English"],                 expertises: [["Governance","EU Institutions"],              ["External Relations","EU Enlargement"]] },
-  { name: "Fatima Al-Hassan",  role: "Trainer",            status: "Inactive", langs: ["Arabic","French","English"],        expertises: [["Policy","Environment, Energy & Climate Change"],["Regions","Northern Africa"]] },
-  { name: "Klaus Schmidt",     role: "Senior Expert",      status: "Active",   langs: ["German","English"],                 expertises: [["Governance","EU Law General / EU Treaties"], ["Project Management","EU Funds and Programmes"]] },
-  { name: "Sarah Williams",    role: "Trainer",            status: "Active",   langs: ["English"],                          expertises: [["Policy","Trade"],                             ["Skills","EU Negotiations"]] },
-  { name: "Amara Diallo",      role: "Associate Expert",   status: "Active",   langs: ["French","English"],                 expertises: [["External Relations","Development and Cooperation"],["Regions","West Africa"]] },
-  { name: "Chen Wei",          role: "Expert",             status: "Active",   langs: ["Chinese","English"],                expertises: [["External Relations","Relations with 3rd Countries"],["Regions","East Asia"]] },
-  { name: "Anna Kowalski",     role: "Senior Trainer",     status: "Active",   langs: ["English","German"],                 expertises: [["Skills","Training of Trainers"],             ["Communication & Information","Journalism"]] },
-  { name: "Hassan Ould",       role: "Trainer",            status: "Active",   langs: ["Arabic","French"],                  expertises: [["Regions","Middle East"],                     ["External Relations","Human Rights"]] },
-  { name: "Marie Lefebvre",    role: "Associate Expert",   status: "Inactive", langs: ["French","English"],                 expertises: [["Policy","Culture, Education and Youth"],     ["Communication & Information","Communications Strategy"]] },
-  { name: "John Murphy",       role: "Expert",             status: "Active",   langs: ["English"],                          expertises: [["Project Management","Project Cycle Management"],["Skills","Crisis Management"]] },
-  { name: "Isabelle Moreau",   role: "Senior Expert",      status: "Active",   langs: ["French","English","German"],        expertises: [["Governance","EU Decision-making Process"],   ["Policy","Business, Economy, Finance and Tax"]] },
-  { name: "Ravi Patel",        role: "Trainer",            status: "Active",   langs: ["English"],                          expertises: [["Project Management","Tender and Proposal Drafting"],["Regions","South Asia"]] },
-  { name: "Elena Vasquez",     role: "Associate Expert",   status: "Active",   langs: ["Spanish","English","French"],       expertises: [["Policy","Employment and Social Issues"],     ["External Relations","Human Rights"]] },
-  { name: "Thomas Weber",      role: "Expert",             status: "Active",   langs: ["German","English"],                 expertises: [["Governance","Public Administration"],        ["Project Management","Audit"]] },
-  { name: "Sophie Leclerc",    role: "Trainer",            status: "Active",   langs: ["French","English","Spanish"],       expertises: [["External Relations","Humanitarian Aid"],     ["Regions","Central Africa"]] },
-  { name: "Marco Ferretti",    role: "Senior Trainer",     status: "Active",   langs: ["English","German"],                 expertises: [["Policy","Internal Market and Industry"],     ["Governance","EU Economic Governance"]] },
-  { name: "Nadia Okonkwo",     role: "Expert",             status: "Active",   langs: ["English","French"],                 expertises: [["Regions","East Africa"],                     ["External Relations","Development and Cooperation"]] },
-  { name: "Pieter van den Berg",role:"Associate Expert",   status: "Active",   langs: ["English","French","German"],        expertises: [["Project Management","Monitoring and Evaluation"],["Governance","EU Financial Framework"]] },
-  { name: "Laila Benali",      role: "Senior Expert",      status: "Active",   langs: ["Arabic","French","English"],        expertises: [["Regions","Southern Africa"],                 ["Policy","Consumers, Health, Food Safety"]] },
+  // ── Northern Europe ───────────────────────────────────────────────────────
+  { name: "Sarah Williams",          langs: ["English"],                   expertises: [["Policy","Trade"],                                      ["Regions","Northern Europe"]] },
+  { name: "James Hartley",           langs: ["English","French"],          expertises: [["Project Management","Audit"],                          ["Regions","Northern Europe"]] },
+  { name: "Oliver Thompson",         langs: ["English"],                   expertises: [["Skills","Crisis Management"],                          ["Regions","Northern Europe"]] },
+  { name: "Charlotte Davies",        langs: ["English","French"],          expertises: [["Communication & Information","PR & Media Relations"],   ["Regions","Northern Europe"]] },
+  { name: "Lars Andersen",           langs: ["English","German"],          expertises: [["Policy","Research and Innovation"],                    ["Regions","Northern Europe"]] },
+  { name: "Ingrid Svensson",         langs: ["English","French"],          expertises: [["Skills","EU Negotiations"],                            ["Regions","Northern Europe"]] },
+  { name: "Erik Johansson",          langs: ["English","German"],          expertises: [["Policy","Environment, Energy & Climate Change"],        ["Regions","Northern Europe"]] },
+  { name: "Astrid Hansen",           langs: ["English","French"],          expertises: [["Communication & Information","Communications Strategy"],["Regions","Northern Europe"]] },
+  { name: "Björn Lindqvist",         langs: ["English","German"],          expertises: [["Governance","EU Decision-making Process"],             ["Regions","Northern Europe"]] },
+  { name: "Siobhán O'Carroll",       langs: ["English","French"],          expertises: [["Policy","Justice and Home Affairs"],                   ["Regions","Northern Europe"]] },
+  { name: "Fionnuala Brennan",       langs: ["English"],                   expertises: [["Skills","Training of Trainers"],                       ["Regions","Northern Europe"]] },
+  // ── Western Europe ────────────────────────────────────────────────────────
+  { name: "Marie Lefebvre",          langs: ["French","English"],          expertises: [["Policy","Culture, Education and Youth"],               ["Regions","Western Europe"]] },
+  { name: "Sophie Leclerc",          langs: ["French","English","Spanish"],expertises: [["External Relations","Humanitarian Aid"],               ["Regions","Western Europe"]] },
+  { name: "François Dupont",         langs: ["French","English"],          expertises: [["Governance","Policy-making Process"],                  ["Regions","Western Europe"]] },
+  { name: "Céline Fontaine",         langs: ["French","English","Spanish"],expertises: [["External Relations","Human Rights"],                   ["Regions","Western Europe"]] },
+  { name: "Guillaume Bernard",       langs: ["French","English"],          expertises: [["Policy","Business, Economy, Finance and Tax"],         ["Regions","Western Europe"]] },
+  { name: "Nathalie Rousseau",       langs: ["French","English"],          expertises: [["Communication & Information","Events / Campaigns"],    ["Regions","Western Europe"]] },
+  { name: "Bertrand Leconte",        langs: ["French","English"],          expertises: [["Governance","EU Economic Governance"],                 ["Regions","Western Europe"]] },
+  { name: "Hélène Morlet",           langs: ["French","English","German"], expertises: [["Policy","Science and Technology"],                     ["Regions","Western Europe"]] },
+  { name: "Véronique Lecomte",       langs: ["French","English"],          expertises: [["Policy","Consumers, Health, Food Safety"],             ["Regions","Western Europe"]] },
+  { name: "Amélie Girard",           langs: ["French","English"],          expertises: [["Policy","Research and Innovation"],                    ["Regions","Western Europe"]] },
+  { name: "Laurent Petit",           langs: ["French","English","German"], expertises: [["Skills","EU Terminology"],                             ["Regions","Western Europe"]] },
+  { name: "Sofie Janssen",           langs: ["English","French","German"], expertises: [["Skills","Facilitating / Moderation"],                  ["Regions","Western Europe"]] },
+  { name: "Bart Vermeersch",         langs: ["English","French"],          expertises: [["Project Management","Contracts / Grants"],             ["Regions","Western Europe"]] },
+  { name: "Henry Whitmore",          langs: ["English","French"],          expertises: [["Project Management","EU Funds and Programmes"],        ["Regions","Western Europe"]] },
+  { name: "Robert Fairfax",          langs: ["English","German"],          expertises: [["Governance","History of European Integration"],        ["Regions","Western Europe"]] },
+  { name: "Victoria Spencer",        langs: ["English"],                   expertises: [["Policy","Mobility and Transport"],                     ["Regions","Western Europe"]] },
+  { name: "Eleanor Farnsworth",      langs: ["English","French","German"], expertises: [["Policy","Justice and Home Affairs"],                   ["Regions","Western Europe"]] },
+  { name: "George Blackwood",        langs: ["English","French"],          expertises: [["Skills","Leadership & Change Management"],             ["Regions","Western Europe"]] },
+  { name: "Miriam Goldstein",        langs: ["English","French","German"], expertises: [["Governance","EU 2030"],                                ["Regions","Western Europe"]] },
+  // ── Central Europe ────────────────────────────────────────────────────────
+  { name: "Klaus Schmidt",           langs: ["German","English"],          expertises: [["Governance","EU Law General / EU Treaties"],           ["Regions","Central Europe"]] },
+  { name: "Thomas Weber",            langs: ["German","English"],          expertises: [["Governance","Public Administration"],                  ["Regions","Central Europe"]] },
+  { name: "Wolfgang Fischer",        langs: ["German","English"],          expertises: [["Project Management","Budget and Financial Management"],["Regions","Central Europe"]] },
+  { name: "Sabine Braun",            langs: ["German","English","French"], expertises: [["Policy","Competition"],                               ["Regions","Central Europe"]] },
+  { name: "Matthias Krause",         langs: ["German","English"],          expertises: [["Governance","EU Financial Framework"],                 ["Regions","Central Europe"]] },
+  { name: "Brigitte Müller",         langs: ["German","English","French"], expertises: [["Project Management","EU Funds and Programmes"],        ["Regions","Central Europe"]] },
+  { name: "Hans Weber",              langs: ["German","English"],          expertises: [["Skills","EU Fact Finding"],                            ["Regions","Central Europe"]] },
+  { name: "Petra Maier",             langs: ["German","English","French"], expertises: [["Governance","Public Administration"],                  ["Regions","Central Europe"]] },
+  { name: "Ernst Hoffmann",          langs: ["German","English"],          expertises: [["Policy","Internal Market and Industry"],               ["Regions","Central Europe"]] },
+  { name: "Zuzana Kovačová",         langs: ["English","German"],          expertises: [["Governance","EU Law General / EU Treaties"],           ["Regions","Central Europe"]] },
+  { name: "Tomáš Novák",             langs: ["English","German"],          expertises: [["Project Management","Monitoring and Evaluation"],      ["Regions","Central Europe"]] },
+  { name: "László Horváth",          langs: ["English","French"],          expertises: [["Skills","EU Negotiations"],                            ["Regions","Central Europe"]] },
+  { name: "Marek Horák",             langs: ["English","German"],          expertises: [["Project Management","EU Funds and Programmes"],        ["Regions","Central Europe"]] },
+  // ── Southern Europe ───────────────────────────────────────────────────────
+  { name: "Maria González",          langs: ["English","Spanish"],         expertises: [["Policy","Agriculture and Fisheries"],                  ["Regions","Southern Europe"]] },
+  { name: "Elena Vasquez",           langs: ["Spanish","English","French"],expertises: [["Policy","Employment and Social Issues"],               ["Regions","Southern Europe"]] },
+  { name: "Marco Ferretti",          langs: ["English","German"],          expertises: [["Policy","Internal Market and Industry"],               ["Regions","Southern Europe"]] },
+  { name: "Antonio Rossi",           langs: ["English","Spanish"],         expertises: [["External Relations","EU Trade Law & WTO Law"],         ["Regions","Southern Europe"]] },
+  { name: "Isabella Conti",          langs: ["English","French","Spanish"],expertises: [["Governance","EU Institutions"],                        ["Regions","Southern Europe"]] },
+  { name: "Roberto Esposito",        langs: ["English","German"],          expertises: [["Project Management","Contracts / Grants"],             ["Regions","Southern Europe"]] },
+  { name: "Carla Fernández",         langs: ["Spanish","English","French"],expertises: [["Policy","Culture, Education and Youth"],               ["Regions","Southern Europe"]] },
+  { name: "Diego Martínez",          langs: ["Spanish","English"],         expertises: [["External Relations","Common Foreign and Security Policy"],["Regions","Southern Europe"]] },
+  { name: "Luisa Ferraro",           langs: ["English","Spanish"],         expertises: [["Policy","Employment and Social Issues"],               ["Regions","Southern Europe"]] },
+  { name: "Pedro Alves",             langs: ["Spanish","English","French"],expertises: [["Policy","Regional / Local Development"],               ["Regions","Southern Europe"]] },
+  { name: "Ana Sousa",               langs: ["Spanish","English"],         expertises: [["Communication & Information","Multi-media / Audiovisual"],["Regions","Southern Europe"]] },
+  { name: "Gianluca Marino",         langs: ["English","French"],          expertises: [["Policy","Competition"],                               ["Regions","Southern Europe"]] },
+  { name: "Francesca De Luca",       langs: ["English","French","Spanish"],expertises: [["Governance","EU and International Organisations"],     ["Regions","Southern Europe"]] },
+  // ── Eastern Europe ────────────────────────────────────────────────────────
+  { name: "John Murphy",             langs: ["English"],                   expertises: [["Project Management","Project Cycle Management"],       ["Regions","Eastern Europe"]] },
+  { name: "Nadia Okonkwo",           langs: ["English","French"],          expertises: [["External Relations","Development and Cooperation"],    ["Regions","Eastern Europe"]] },
+  { name: "Pieter van den Berg",     langs: ["English","French","German"], expertises: [["Project Management","Monitoring and Evaluation"],      ["Regions","Eastern Europe"]] },
+  { name: "Piotr Kowalczyk",         langs: ["English","French"],          expertises: [["Governance","EU Decision-making Process"],             ["Regions","Eastern Europe"]] },
+  { name: "Katarzyna Nowak",         langs: ["French","English","German"], expertises: [["Policy","Employment and Social Issues"],               ["Regions","Eastern Europe"]] },
+  { name: "Marta Wiśniewska",        langs: ["French","English"],          expertises: [["External Relations","Development and Cooperation"],    ["Regions","Eastern Europe"]] },
+  { name: "Agnieszka Wróbel",        langs: ["English","French"],          expertises: [["Policy","Regional / Local Development"],               ["Regions","Eastern Europe"]] },
+  { name: "Wojciech Zając",          langs: ["English","German"],          expertises: [["Project Management","EU Funds and Programmes"],        ["Regions","Eastern Europe"]] },
+  { name: "Olena Kovalenko",         langs: ["English","German"],          expertises: [["External Relations","EU Enlargement"],                 ["Regions","Eastern Europe"]] },
+  { name: "Bohdan Kravchuk",         langs: ["English","French"],          expertises: [["Project Management","Monitoring and Evaluation"],      ["Regions","Eastern Europe"]] },
+  { name: "Svetlana Ivanova",        langs: ["English","French"],          expertises: [["External Relations","EU Enlargement"],                 ["Regions","Eastern Europe"]] },
+  // ── Southeastern Europe ───────────────────────────────────────────────────
+  { name: "Jean-Pierre Dubois",      langs: ["French","English"],          expertises: [["Governance","EU Institutions"],                        ["Regions","Southeastern Europe"]] },
+  { name: "Ravi Patel",              langs: ["English"],                   expertises: [["Project Management","Tender and Proposal Drafting"],   ["Regions","Southeastern Europe"]] },
+  { name: "Mihai Popescu",           langs: ["English","French"],          expertises: [["External Relations","EU Enlargement"],                 ["Regions","Southeastern Europe"]] },
+  { name: "Ioana Constantin",        langs: ["French","English"],          expertises: [["Policy","Regional / Local Development"],               ["Regions","Southeastern Europe"]] },
+  { name: "Andrei Ionescu",          langs: ["English","French"],          expertises: [["Governance","EU Law General / EU Treaties"],           ["Regions","Southeastern Europe"]] },
+  { name: "Dragana Petrović",        langs: ["English","French"],          expertises: [["External Relations","EU Enlargement"],                 ["Regions","Southeastern Europe"]] },
+  { name: "Nikola Jovanović",        langs: ["English","German"],          expertises: [["Governance","EU Institutions"],                        ["Regions","Southeastern Europe"]] },
+  { name: "Vesna Marinković",        langs: ["French","English"],          expertises: [["Policy","Employment and Social Issues"],               ["Regions","Southeastern Europe"]] },
+  { name: "Ágnes Tóth",              langs: ["English","German","French"], expertises: [["Policy","Regional / Local Development"],               ["Regions","Southeastern Europe"]] },
+  { name: "Konstantinos Papadopoulos",langs:["English","French"],          expertises: [["Governance","EU Economic Governance"],                 ["Regions","Southeastern Europe"]] },
+  { name: "Emre Yılmaz",             langs: ["English","French"],          expertises: [["External Relations","EU Enlargement"],                 ["Regions","Southeastern Europe"]] },
+  { name: "Diana Stanescu",          langs: ["French","English"],          expertises: [["Policy","Regional / Local Development"],               ["Regions","Southeastern Europe"]] },
+  // ── Non-European focus ────────────────────────────────────────────────────
+  { name: "Fatima Al-Hassan",        langs: ["Arabic","French","English"], expertises: [["Policy","Environment, Energy & Climate Change"],        ["Regions","Northern Africa"]] },
+  { name: "Laila Benali",            langs: ["Arabic","French","English"], expertises: [["Policy","Consumers, Health, Food Safety"],             ["Regions","Northern Africa"]] },
+  { name: "Hassan Ould",             langs: ["Arabic","French"],           expertises: [["External Relations","Human Rights"],                   ["Regions","Middle East"]] },
+  { name: "Ahmed Khalil",            langs: ["Arabic","English","French"], expertises: [["External Relations","Common Foreign and Security Policy"],["Regions","Middle East"]] },
+  { name: "Amara Diallo",            langs: ["French","English"],          expertises: [["External Relations","Development and Cooperation"],    ["Regions","West Africa"]] },
+  { name: "Christophe Moreau",       langs: ["French","English"],          expertises: [["External Relations","Development and Cooperation"],    ["Regions","West Africa"]] },
+  { name: "Chen Wei",                langs: ["Chinese","English"],         expertises: [["External Relations","Relations with 3rd Countries"],   ["Regions","East Asia"]] },
+  { name: "Jean-Baptiste Nguyen",    langs: ["French","English"],          expertises: [["Project Management","Project Cycle Management"],       ["Regions","Southeast Asia"]] },
+  // ── No-region EU specialists ──────────────────────────────────────────────
+  { name: "Anna Kowalski",           langs: ["English","German"],          expertises: [["Skills","Training of Trainers"],                       ["Communication & Information","Journalism"]] },
+  { name: "Isabelle Moreau",         langs: ["French","English","German"], expertises: [["Governance","EU Decision-making Process"],             ["Policy","Business, Economy, Finance and Tax"]] },
+  { name: "Alice Pemberton",         langs: ["English"],                   expertises: [["Communication & Information","Journalism"],            ["Skills","Crosscultural Communication"]] },
+  { name: "Marcus Steinberg",        langs: ["German","English"],          expertises: [["Governance","EU Financial Framework"],                 ["Project Management","Budget and Financial Management"]] },
+  { name: "Patricia O'Brien",        langs: ["English","French"],          expertises: [["Skills","Training of Trainers"],                       ["Communication & Information","PR & Media Relations"]] },
+  { name: "Aurélien Camus",          langs: ["French","English","Spanish"],expertises: [["Policy","Trade"],                                      ["External Relations","EU Trade Law & WTO Law"]] },
+  { name: "Stefan Bergmann",         langs: ["German","English","French"], expertises: [["Governance","EU Decision-making Process"],             ["Skills","EU Negotiations"]] },
+  { name: "Brigid Flanagan",         langs: ["English"],                   expertises: [["Policy","Justice and Home Affairs"],                   ["Skills","Reporting"]] },
+  { name: "Frederica Van Houten",    langs: ["English","French","German"], expertises: [["Governance","EU 2030"],                                ["Policy","Research and Innovation"]] },
+  { name: "Grace Thornton",          langs: ["English"],                   expertises: [["Skills","Reporting"],                                  ["Communication & Information","EU Information Centre"]] },
+  { name: "Luca Bianchi",            langs: ["English","French"],          expertises: [["Policy","Science and Technology"],                     ["Governance","EU and International Organisations"]] },
+  { name: "Yumiko Tanaka",           langs: ["English","French"],          expertises: [["External Relations","Relations with 3rd Countries"],   ["Governance","EU and International Organisations"]] },
+  { name: "Nikolaos Georgiou",       langs: ["English","French"],          expertises: [["Policy","Competition"],                               ["Regions","Southeastern Europe"]] },
 ];
 
 // ── Populate dropdowns on load ─────────────────────────────────────────────
@@ -519,7 +593,7 @@ function renderResults(results) {
 
   if (results.length === 0) {
     const tr = document.createElement("tr");
-    tr.innerHTML = `<td colspan="5">
+    tr.innerHTML = `<td colspan="3">
       <div class="empty-state">
         <p>No experts match the current filters.</p>
         <small>Try removing one or more filters.</small>
@@ -530,10 +604,6 @@ function renderResults(results) {
   }
 
   results.forEach(expert => {
-    const statusBadge = expert.status === "Active"
-      ? `<span class="badge badge-active">Active</span>`
-      : `<span class="badge badge-inactive">Inactive</span>`;
-
     const langTags = expert.langs.map(l =>
       `<span class="lang-tag">${l}</span>`
     ).join("");
@@ -545,8 +615,6 @@ function renderResults(results) {
     const tr = document.createElement("tr");
     tr.innerHTML = `
       <td><span class="expert-name">${expert.name}</span></td>
-      <td>${expert.role}</td>
-      <td>${statusBadge}</td>
       <td><div class="lang-list">${langTags}</div></td>
       <td>${expertiseCells}</td>
     `;
